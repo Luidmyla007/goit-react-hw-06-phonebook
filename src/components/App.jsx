@@ -1,81 +1,22 @@
-import { useState, useEffect } from 'react';
-import { nanoid } from "nanoid"; 
 import { GlobalStyle } from './GlobalStyles';
 import { Container } from './App.styled';
 import { ContactStyled } from './App.styled';
-import Form from './ContactForm/ContactForm';
-import ContactList from './ContactList/ContactList';
-import Filter from './Filter/Filter';
+import { ContactForm } from './ContactForm/ContactForm';
+import { ContactList } from './ContactList/ContactList';
+import { Filter } from './Filter/Filter';
 
-export function App() {
-  const [contacts, setContacts] = useState([]);
-  const [filter, setFilter] = useState('');
-
-  useEffect(() => {
-    const contactsStorage = localStorage.getItem('contacts');
-    const parsedContacts = JSON.parse(contactsStorage);
-
-    if (parsedContacts) {
-      setContacts(parsedContacts);
-    } else {
-      return;
-    }
-  }, []);
-  
-  useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
-
-  const formSubmitHandler = (data, resetForm) => {
-    const { name, number } = data;  
-    const newContact = contacts.find(contact => contact.name === name);
-
-    if (newContact) {
-      return alert(`${name} is already in contacts`);
-    } else {
-      const newContact = {
-        id: nanoid(),
-        name: name,
-        number: number,
-      };
-
-     setContacts(contacts => [...contacts, newContact]);
-      resetForm();
-    };
-  };
-
-  const deleteContact = contactId => {
-    setContacts(contacts => 
-      contacts.filter(contact => contact.id !== contactId),
-    );
-  };
-
-  const getContact = () =>{     
-       return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(filter.toLowerCase())
-    );    
-  };
- 
-  const onFilterChange = event => {      
-    setFilter(event.currentTarget.value);
-  };  
-  
+export const App = () => { 
      return (
      <Container>
          <GlobalStyle/>        
-        <Form onSubmit={formSubmitHandler} />        
+        <ContactForm />        
         <ContactStyled>
           <h2>Contacts</h2>
-          <Filter value={filter} onChange={onFilterChange}/>
-          <ContactList
-            contacts={getContact()}
-            onDeleteContact={deleteContact}            
-          />          
+          <Filter/>
+          <ContactList/>          
         </ContactStyled>
      </Container>
-    );
-  
-
+  );
 };
 
 
